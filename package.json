@@ -1,0 +1,16 @@
+{
+  "name": "@floralink/core",
+  "version": "1.0.0",
+  "description": "Core library for Floralink",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src --fix"
+  },
+  "author": "Vincent Ruge",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "8.9.0"
+  }
+}
