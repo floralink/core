@@ -1,7 +1,9 @@
 function getMedian(arr) {
-  let sortedArray = arr.sort((a, b) => a - b);
   let arrLength = arr.length;
+  if (arrLength === 0) return [];
+  if (arrLength === 1) return [arr[0]];
 
+  let sortedArray = arr.sort((a, b) => a - b);
   if (arrLength % 2 === 0) {
     // length is even number -> return average of both middle values
     if (sortedArray[arrLength / 2 - 1] === sortedArray[arrLength / 2])
@@ -14,6 +16,7 @@ function getMedian(arr) {
 }
 
 function getQuantile(arr, q) {
+  if (arr.length === 0) return -1;
   const round = Math.floor;
 
   let sorted = arr.sort((a, b) => a - b);
@@ -32,6 +35,9 @@ function getQuantile(arr, q) {
 }
 
 function getMode(arr) {
+  if (arr.length === 0) return [];
+  if (arr.length === 1) return [arr[0]];
+
   let counter = {};
   let mode = [];
   let max = 0;
@@ -139,6 +145,7 @@ export function calculateStatistics(
 }
 
 export function getMinMaxDate(dates) {
+  if (dates.length === 0) return [];
   let minDate = dates[0];
   let maxDate = dates[0];
 
