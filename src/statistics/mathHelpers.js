@@ -16,7 +16,8 @@ function getMedian(arr) {
 }
 
 function getQuantile(arr, q) {
-  if (arr.length === 0) return -1;
+  // LAZY WORKAROUND
+  if (arr.length < 5) return -1;
   const round = Math.floor;
 
   let sorted = arr.sort((a, b) => a - b);

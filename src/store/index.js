@@ -1,20 +1,19 @@
 // load JSON databases into objects (dataStorage)
 var dataStorage = {};
 
-export async function initializePlugin(plugin, credentials = {}) {
-  // todo: generalize, switch by local or API database
-  switch (plugin.sourceType) {
+export async function initializeDatabase(database, credentials = {}) {
+  switch (database.sourceType) {
     case "api": // API
-      plugin.initialize(credentials);
-      console.log(`INFO: Plugin '${plugin.name}' successfully initialized.`);
+      database.initialize(credentials);
+      console.log(`INFO: Plugin '${database.id}' successfully initialized.`);
       break;
     case "local":
-      dataStorage[plugin.name] = plugin.getDatabase();
-      console.log(`INFO: Plugin '${plugin.name}' successfully initialized.`);
+      dataStorage[database.id] = database.data;
+      console.log(`INFO: Plugin '${database.id}' successfully initialized.`);
       break;
     default:
       console.log(
-        `INFO: Plugin '${plugin.name}' could't be initialized, because data type (${plugin.sourceType}) is not specified or unknown.`
+        `INFO: Plugin '${database.id}' could't be initialized, because data type (${database.id}) is not specified or unknown.`
       );
   }
 }

@@ -1,7 +1,7 @@
 import { convertToTaxonOccurrenceData } from "./conversions";
 
 import {
-  initializePlugin,
+  initializeDatabase,
   getOccurrenceData,
   getTaxonDataByIDs,
 } from "./store";
@@ -19,5 +19,5 @@ export {
   getOccurrenceStatistics,
   getTaxonOccurrenceStatistics,
   getTaxonSpecificStatistics,
-  initializePlugin,
+  initializeDatabase,
 };
