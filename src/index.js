@@ -1,16 +1,16 @@
-import { convertToTaxonOccurrenceData } from "./conversions";
+import { convertToTaxonOccurrenceData } from "./conversions/index.js";
 
 import {
   initializeDatabase,
   getOccurrenceData,
   getTaxonDataByIDs,
-} from "./store";
+} from "./store/index.js";
 
 import {
   getOccurrenceStatistics,
   getTaxonOccurrenceStatistics,
   getTaxonSpecificStatistics,
-} from "./statistics";
+} from "./statistics/index.js";
 
 export {
   getOccurrenceData,
