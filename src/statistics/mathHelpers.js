@@ -65,16 +65,21 @@ function getVariance(arr, average) {
   return sum / (arr.length - 1);
 }
 
-function getFrequencies(arr) {
+function getFrequencies(arr, transform, check) {
   let frequencies = {};
   arr.forEach((value) => {
-    if (Object.prototype.hasOwnProperty.call(frequencies, value)) {
-      frequencies[value] += 1;
-    } else {
-      frequencies[value] = 1;
-    }
+    if (!check || check(value))
+      addOneToKeyValue(frequencies, transform ? transform(value) : value);
   });
   return frequencies;
+}
+
+function addOneToKeyValue(object, key) {
+  if (Object.prototype.hasOwnProperty.call(object, key)) {
+    object[key] += 1;
+  } else {
+    object[key] = 1;
+  }
 }
 
 // return statistics object for array of values (currently only integers)
