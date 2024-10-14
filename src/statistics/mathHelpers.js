@@ -150,23 +150,46 @@ export function calculateStatistics(
   return propertyStatistics;
 }
 
+// Dates
+
 export function getMinMaxDate(dates) {
   if (dates.length === 0) return [];
-  let minDate = dates[0];
-  let maxDate = dates[0];
+
+  let minFromDateObject = dates[0];
+  let minFromDate = new Date(minFromDateObject.from);
+  const updateMinFrom = (date) => {
+    minFromDateObject = date;
+    minFromDate = new Date(minFromDateObject.from);
+  };
+
+  let maxToDateObject = dates[0];
+  let maxToDate = new Date(maxToDateObject.to);
+  const updateMaxTo = (date) => {
+    maxToDateObject = date;
+    maxToDate = new Date(maxToDateObject.from);
+  };
 
   dates.forEach((date) => {
-    if (new Date(date.from) < new Date(minDate.from)) {
-      minDate = date;
-    } else if (new Date(date.from) > new Date(maxDate.from)) {
-      // behaviour moves to outer limits from date.from
-      maxDate = date;
-    }
+    let fromDate = new Date(date.from);
+    let toDate = new Date(date.to);
+
+    if (
+      fromDate < minFromDate ||
+      (fromDate = minFromDate && toDate < new Date(minFromDateObject.to))
+    )
+      updateMinFrom(date);
+
+    // Note: The following is not an else-if condition because the earliest date range could also be the latest
+    if (
+      toDate > maxToDate ||
+      (toDate = maxToDate && fromDate > new Date(maxToDateObject.from))
+    )
+      updateMaxTo(date);
   });
 
-  let minMaxDate = {
-    minDate,
-    maxDate,
+  return {
+    minFromDateObject,
+    maxToDateObject,
   };
 
   return minMaxDate;
