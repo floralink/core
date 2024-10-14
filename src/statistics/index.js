@@ -1,4 +1,8 @@
-import { calculateStatistics, getMinMaxDate } from "./mathHelpers.js";
+import {
+  calculateStatistics,
+  getMinMaxDate,
+  getYearlyFrequencies,
+} from "./mathHelpers.js";
 
 export function getOccurrenceStatistics(occurrences) {
   const occurrenceDates = Object.values(occurrences).reduce((prev, curr) => {
@@ -16,6 +20,7 @@ export function getOccurrenceStatistics(occurrences) {
     total: Object.keys(occurrences).length,
     uniqueTaxaCount,
     ...getMinMaxDate(occurrenceDates),
+    yearlyFrequencies: getYearlyFrequencies(occurrenceDates),
   };
 }
 

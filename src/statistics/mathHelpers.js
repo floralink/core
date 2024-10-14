@@ -191,6 +191,14 @@ export function getMinMaxDate(dates) {
     minFromDateObject,
     maxToDateObject,
   };
+}
 
-  return minMaxDate;
+export function getYearlyFrequencies(dates) {
+  return getFrequencies(
+    dates,
+    (date) => new Date(date.from).getFullYear(),
+    // Ignore date ranges that aren't contained in a single year
+    (date) =>
+      new Date(date.from).getFullYear() === new Date(date.to).getFullYear()
+  );
 }
