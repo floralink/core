@@ -5,13 +5,13 @@
  *
  * @param {IndexedOccurrences} occurrenceData Object of occurrence data with
  * occurrence IDs as keys.
- * @return {TaxonOccurrenceData} Object with taxon IDs as keys and objects with
+ * @return {TaxonOccurrenceIDs} Object with taxon IDs as keys and objects with
  * occurrence IDs as values.
  */
 export function convertToTaxonOccurrenceData(
   occurrenceData: IndexedOccurrences
-): TaxonOccurrenceData {
-  let taxonData: TaxonOccurrenceData = {};
+): TaxonOccurrenceIDs {
+  let taxonData: TaxonOccurrenceIDs = {};
   Object.entries(occurrenceData).forEach(([occurrenceID, occurrence]) => {
     if (taxonData[occurrence.taxonID] !== undefined) {
       taxonData[occurrence.taxonID].occurrenceIDs.push(occurrenceID);

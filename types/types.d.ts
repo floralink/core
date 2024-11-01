@@ -1,4 +1,4 @@
-type IndexedObject<T = any> = { [index: string]: T };
+type StringIndexedObject<T = any> = { [id: string]: T };
 
 interface VagueDate {
   from: string;
@@ -18,5 +18,7 @@ interface Occurrence {
   date: VagueDate;
 }
 
-type IndexedOccurrences = IndexedObject<Occurrence>;
-type TaxonOccurrenceData = IndexedObject<{ occurrenceIDs: string[] }>;
+type IndexedOccurrences = StringIndexedObject<Occurrence>;
+type TaxonOccurrenceIDs = StringIndexedObject<string[]>;
+
+type IndexedOccurrenceQueryResults = IndexedObject<{ occurrenceIDs: string[] }>;
