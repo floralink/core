@@ -1,5 +1,6 @@
 _archive
 _examples
 _todo
+.vscode
 node_modules
 TODO.md
