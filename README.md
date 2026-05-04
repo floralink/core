@@ -2,65 +2,218 @@
 
 ![Floralink Core](logo.png)
 
-A small library for working with plant occurrence data, taxon specific data and taxon reference data. Contains a simple store for collected data and methods for calculating statistics. A final data structure is yet to be described. This documentation will be enriched when the library has reached a stable concept.
+**A small library for working with plant occurrence data, taxon specific data and taxon reference data.**
 
-- [@floralink/core](#floralinkcore)
-  - [Setup](#setup)
-  - [Methods](#methods)
-    - [Data sources (Store)](#data-sources-store)
-    - [Type Conversions](#type-conversions)
-    - [Statistics](#statistics)
+It consists of methods for calculating statistics for a set of taxa, taxon traits, occurrences or taxa in occurrences
+as well as utilities for defining plugins, transforming data formats and working with dates among others.
+Currently only supports local JSON databases for taxa or traits and API connectors for occurrences. Documentation is limited.
 
 ## Setup
 
-You can install the Floralink core library with npm:
+### Install
 
 ```sh
 npm install @floralink/core
 ```
 
-Then, in your project:
+### Import
 
-```javascript
+```typescript
 import * as floralink from "@floralink/core";
 ```
 
-## Methods
+## Plugins
 
-### Data sources (Store)
+To get the scales of measure of properties in a group or all groups of a traits plugin,
+you can use one of the following methods respectively:
 
-```javascript
-initializePlugin(plugin, credentials);
+```ts
+function getGroupScalesOfMeasure(group: TraitsJsonGroup): ScaleOfMeasure[];
+function getPluginScalesOfMeasure(plugin: SourcePlugin): ScaleOfMeasure[];
+
+type ScaleOfMeasure = "nominal" | "ordinal" | "interval";
 ```
 
-```javascript
-getOccurrenceData(provider, query);
+## Queries
+
+### Taxon - `resolveTaxon`
+
+```ts
+function resolveTaxon(
+  data: IdentifierIndexedObject<Taxon>,
+  taxonID: string,
+  path?: string[],
+): Taxon;
 ```
 
-```javascript
-getTaxonDataByID(taxonIDs, pluginID);
+Resolve potential synonyms of a taxonID defined in data and return `Taxon` object. Returns the resolved taxon's data.
+
+### Outer taxon hierarchy - `getOuterTaxonHierarchy`
+
+```ts
+function getOuterTaxonHierarchy(
+  data: IdentifierIndexedObject<Taxon>,
+  taxonID: string,
+): Taxon[];
 ```
 
-```javascript
-getTaxonSpecific(taxonIDs, pluginID);
+### Traits - `getTraitsByTaxonIDs`
+
+```ts
+function getTraitsByTaxonIDs<T>(
+  data: IdentifierIndexedObject<T>,
+  ids: string[],
+): IdentifierIndexedObject<T>;
 ```
 
-### Type Conversions
+### Occurrences - `queryAPI`
 
-```javascript
-convertToTaxonOccurrenceData(occurrenceData);
+```ts
+function queryAPI(
+  group: ApiGroup,
+  query: OccurrenceQuery,
+  options?: ApiOptions,
+): Promise<Occurrence[]>;
 ```
 
-### Statistics
+## Transformations
 
-```javascript
-getOccurrenceStatistics(occurrenceData);
+### `convertToTaxonOccurrenceIDs`
+
+```ts
+function convertToTaxonOccurrenceIDs(
+  occurrences: Occurrence[],
+): TaxonIndexedObject<string[]>;
 ```
 
-```javascript
-getTaxonOccurrenceStatistics(taxonOccurrenceData, occurrenceData);
+Convert an object of occurrence data indexed by occurrence IDs to a new object where each key is a taxon ID and each value is an object with an "occurrenceIDs" property containing an array of occurrence IDs from the original object.
+
+### `getTaxonIDsFromOccurrences`
+
+```ts
+function getTaxonIDsFromOccurrences(occurrences: Occurrence[]): string[];
 ```
 
-```javascript
-getTaxonSpecificStatistics(taxonSpecificPlugin, taxonSpecificData, filterIDs);
+Returns a deduplicated list of taxon IDs referenced in the given array of occurrences.
+
+## Statistics
+
+### `getOccurrencesStatistics`
+
+```ts
+function getOccurrencesStatistics(
+  occurrences: Occurrence[],
+): QueryOccurrencesStatistics;
+```
+
+Calculate and return statistics based on the given array of occurrences
+including total occurrences count, unique taxa count, extreme dates, and yearly frequencies.
+
+### `getTaxaStatistics`
+
+```ts
+function getTaxaStatistics(taxa: Taxon[]): TaxaStatistics;
+```
+
+### `getTaxonOccurrencesStatistics`
+
+```ts
+function getTaxonOccurrencesStatistics(
+  taxonOccurrenceIDs: TaxonIndexedObject<string[]>,
+  occurrencesData: OccurrenceIndexedObject<Occurrence>,
+): TaxonIndexedObject<QueryOccurrencesStatistics>;
+```
+
+### `getTraitsStatistics`
+
+```ts
+function getTraitsStatistics(
+  traitsGroup: TraitsJsonGroup,
+  data: TaxonIndexedObject<Traits>,
+  taxonIDs: string[],
+  filterIDs?: string[],
+): TraitsStatistics;
+```
+
+## Date utilities
+
+### `getDateStringFromISO`
+
+```ts
+function getGermanDateStringFromISO(
+  isoDate: string,
+  localeCode?: string,
+): string;
+```
+
+Helps to display an ISO date with time in a German locale.
+
+### `getDateStringFromVagueDate`
+
+```ts
+function getDateStringFromVagueDate(
+  vagueDate: VagueDate,
+  localeCode?: string,
+): string;
+```
+
+Helps to display a `VagueDate` localized.
+
+`VagueDate` is a type specific to the NetPhyD API.
+It allows to define resolution of data and date ranges where the actual data lies within.
+
+### `getYearStringFromVagueDate`
+
+```ts
+function getYearStringFromVagueDate(vagueDate: VagueDate): string;
+```
+
+Takes in a `VagueDate` and returns
+
+- the year as a string if start and end year are the same
+- or a German year range like `"von 2010 bis 2019"`.
+
+## Defining plugins
+
+You can use define functions to declare or export a typed object in a type-safe way.
+
+- `defineGeneratorConfig`
+- `defineGroup`
+- `defineJsonGroup`
+- `definePlugin`
+- `defineProperty`
+- `defineTaxaJsonGroup`
+- `defineTraitsJsonGroup`
+
+```ts
+import { definePlugin } from "@floralink/web";
+
+export default definePlugin({
+  id: "germansl",
+  version: "1.5.6",
+  title: "GermanSL",
+  sourceType: "json",
+  description: "Die GermanSL ist eine taxonomische Referenzdatenbank ...",
+  license: {
+    spdx: "CC-BY-4.0",
+    title: "CC BY 4.0",
+    url: "https://creativecommons.org/licenses/by/4.0/deed.de",
+  },
+  homepage: "https://germansl.infinitenature.org/",
+  taxonReference: true,
+  // ...
+});
+```
+
+### Regions
+
+In a traits group of a plugin you can specify the region this data applies to on the `meta.region` key with a `Describable` object. This library exports some regions for reusal.
+
+```ts
+import { de } from "@floralink/core";
+
+// {
+//   title: "Deutschland",
+//   short: "DE",
+// }
 ```
